@@ -131,6 +131,7 @@ body{
 
   const isLocal =
     location.protocol === 'file:'
+  let passwordFails = 0
 
   const destroy = () => {
 
@@ -453,6 +454,33 @@ function failAttempt(){
 
   addLine('ACCESS DENIED','line error')
   addLine('INVALID RESPONSE','line error')
+
+  if(currentStage === 0){
+
+    passwordFails++
+
+    if(passwordFails === 2){
+
+      addLine('')
+      addLine('HINT DETECTED','hint')
+      addLine('The answer was already broadcast earlier this week.','hint')
+    }
+
+    if(passwordFails === 3){
+
+      addLine('')
+      addLine('RECOVERED TRANSMISSION:','hint')
+      addLine('"ELE..."','hint')
+    }
+
+    if(passwordFails === 4){
+
+      addLine('')
+      addLine('ARCHIVE SIGNAL FOUND','hint')
+      addLine('Attentive watchers already know the code.','hint')
+    }
+  }
+
   addLine('')
 
   currentInput = ''
