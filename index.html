@@ -147,21 +147,30 @@ body{
     }
   })
 
-  if(!isLocal){
+const isMobile =
+  /Android|iPhone|iPad|iPod/i.test(
+    navigator.userAgent
+  )
 
-    setInterval(() => {
+if(!isLocal && !isMobile){
 
-      const threshold = 160
+  setInterval(() => {
 
-      if(
-        window.outerWidth - window.innerWidth > threshold ||
-        window.outerHeight - window.innerHeight > threshold
-      ){
-        destroy()
-      }
+    const widthDiff =
+      window.outerWidth - window.innerWidth
 
-    },1000)
-  }
+    const heightDiff =
+      window.outerHeight - window.innerHeight
+
+    if(
+      widthDiff > 220 ||
+      heightDiff > 220
+    ){
+      destroy()
+    }
+
+  },1500)
+}
 
 })()
 
