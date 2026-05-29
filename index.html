@@ -106,13 +106,25 @@ body{
     height:7px;
   }
 }
+#mobileInput{
+  position:fixed;
+  opacity:0;
+  pointer-events:none;
+  top:-100px;
+}
 </style>
 </head>
 
 <body>
 
 <div id="terminal"></div>
-
+<input
+  id="mobileInput"
+  type="text"
+  autocomplete="off"
+  autocapitalize="off"
+  spellcheck="false"
+/>
 <script>
 
 ;(() => {
@@ -130,22 +142,72 @@ body{
     e.preventDefault()
   })
 
-  document.addEventListener('keydown', e => {
+const mobileInput =
+  document.getElementById('mobileInput')
 
-    const blocked =
-      e.key === 'F12' ||
-      (e.ctrlKey && e.shiftKey && ['I','J','C'].includes(e.key.toUpperCase())) ||
-      (e.ctrlKey && e.key.toUpperCase() === 'U')
+document.body.addEventListener('click', () => {
+  mobileInput.focus()
+})
 
-    if(blocked){
+mobileInput.addEventListener('input', () => {
 
-      e.preventDefault()
+  currentInput =
+    mobileInput.value
 
-      if(!isLocal){
-        destroy()
-      }
+  updateInput()
+})
+
+mobileInput.addEventListener('keydown', e => {
+
+  if(!acceptingInput)
+    return
+
+  const prompt =
+    document.getElementById('activePrompt')
+
+  if(!prompt)
+    return
+
+  if(e.key === 'Enter'){
+
+    e.preventDefault()
+
+    const stage =
+      stages[currentStage]
+
+    const answer =
+      normalize(currentInput)
+
+    removePrompt()
+
+    addLine(
+      `C:\\watchers> ${currentInput}`
+    )
+
+    if(
+      answer === normalize(stage.answer)
+    ){
+      successStage(stage)
+    }else{
+      failAttempt()
     }
-  })
+
+    currentInput = ''
+
+    mobileInput.value = ''
+
+    return
+  }
+
+  setTimeout(() => {
+
+    currentInput =
+      mobileInput.value
+
+    updateInput()
+
+  },0)
+})
 
 const isMobile =
   /Android|iPhone|iPad|iPod/i.test(
